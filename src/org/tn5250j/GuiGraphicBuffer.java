@@ -42,6 +42,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Properties;
 
 import javax.swing.SwingUtilities;
 
@@ -257,10 +258,15 @@ public class GuiGraphicBuffer implements ScreenOIAListener,
 
 		colorCursor = Color.white;
 
+		Properties connection = this.gui.getSession().getConnectionProperties();
+
 		if (!config.isPropertyExists("colorBg"))
 			setProperty("colorBg", Integer.toString(colorBg.getRGB()));
 		else {
 			colorBg = getColorProperty("colorBg");
+		}
+		if (connection.getProperty(TN5250jConstants.SESSION_HOST).equals("p7dev")) {
+			colorBg = Color.red;
 		}
 		gui.setBackground(colorBg);
 
