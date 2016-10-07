@@ -358,6 +358,9 @@ public class Tn5250jController extends Thread {
 		if (isSpecified("-hb", args))
 			sesProps.put(TN5250jConstants.SESSION_HEART_BEAT, "1");
 
+		if (isSpecified("-color", args))
+			sesProps.put(TN5250jConstants.SESSION_COLOR_SCHEMA, getParm("-color", args));
+
 		return sesProps;
 	}
 

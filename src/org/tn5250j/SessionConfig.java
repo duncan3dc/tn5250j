@@ -25,8 +25,11 @@ import org.tn5250j.event.SessionConfigListener;
 import org.tn5250j.interfaces.ConfigureFactory;
 import org.tn5250j.keyboard.KeyMnemonic;
 import org.tn5250j.keyboard.KeyMnemonicSerializer;
+import org.tn5250j.sessionsettings.Schema;
 import org.tn5250j.tools.GUIGraphicsUtils;
 import org.tn5250j.tools.LangTool;
+import org.tn5250j.tools.logging.TN5250jLogFactory;
+import org.tn5250j.tools.logging.TN5250jLogger;
 
 import javax.swing.*;
 import java.awt.*;
@@ -45,6 +48,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static java.lang.Float.parseFloat;
 import static org.tn5250j.keyboard.KeyMnemonic.*;
+
 
 /**
  * A host session configuration object
@@ -201,20 +205,13 @@ public class SessionConfig {
       if (sesProps.size() == 0) {
         sesProps.putAll(loadPropertiesFromResource(getConfigurationResource()));
 
-        Properties colorSchemaDefaults = loadPropertiesFromResource("tn5250jSchemas.properties");
-        String prefix = colorSchemaDefaults.getProperty("schemaDefault");
-        sesProps.setProperty("colorBg", colorSchemaDefaults.getProperty(prefix + ".colorBg"));
-        sesProps.setProperty("colorRed", colorSchemaDefaults.getProperty(prefix + ".colorRed"));
-        sesProps.setProperty("colorTurq", colorSchemaDefaults.getProperty(prefix + ".colorTurq"));
-        sesProps.setProperty("colorCursor", colorSchemaDefaults.getProperty(prefix + ".colorCursor"));
-        sesProps.setProperty("colorGUIField", colorSchemaDefaults.getProperty(prefix + ".colorGUIField"));
-        sesProps.setProperty("colorWhite", colorSchemaDefaults.getProperty(prefix + ".colorWhite"));
-        sesProps.setProperty("colorYellow", colorSchemaDefaults.getProperty(prefix + ".colorYellow"));
-        sesProps.setProperty("colorGreen", colorSchemaDefaults.getProperty(prefix + ".colorGreen"));
-        sesProps.setProperty("colorPink", colorSchemaDefaults.getProperty(prefix + ".colorPink"));
-        sesProps.setProperty("colorBlue", colorSchemaDefaults.getProperty(prefix + ".colorBlue"));
-        sesProps.setProperty("colorSep", colorSchemaDefaults.getProperty(prefix + ".colorSep"));
-        sesProps.setProperty("colorHexAttr", colorSchemaDefaults.getProperty(prefix + ".colorHexAttr"));
+
+        // Get the default schema
+        Schema schema = Schema.getDefault();
+        for (String key: schema.getKeys()) {
+          sesProps.setProperty(key, schema.getString(key));
+        }
+
         sesProps.setProperty("font", GUIGraphicsUtils.getDefaultFont());
 
         configureFactory.saveSettings("dfltSessionProps", getConfigurationResource(), "");
@@ -422,5 +419,4 @@ public class SessionConfig {
     }
 
   }
-
 }

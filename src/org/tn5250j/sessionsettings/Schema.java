@@ -1,166 +1,155 @@
 package org.tn5250j.sessionsettings;
 
 import java.awt.Color;
+import java.net.URL;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.Hashtable;
 
-class Schema {
+public class Schema {
+
+    private static Properties properties;
+
+    private static String[] keys = new String[] {
+        "colorBg",
+        "colorCursor",
+        "colorGUIField",
+        "colorSep",
+        "colorHexAttr",
+        "colorCursor",
+
+        "colorRed",
+        "colorTurq",
+        "colorWhite",
+        "colorYellow",
+        "colorGreen",
+        "colorPink",
+        "colorBlue",
+    };
+
+    private String title;
+    private Hashtable colors = new Hashtable<String, String>();
+
+
+    private static String getProperty(String key) {
+
+        // If we've not loaded the properties yet then do so now
+        if (properties == null) {
+            properties = new Properties();
+            URL file = ClassLoader.getSystemClassLoader().getResource("tn5250jSchemas.properties");
+            try {
+                properties.load(file.openStream());
+            } catch (IOException e) {
+                System.err.println(e);
+            }
+        }
+
+        if (!properties.containsKey(key)) {
+            return "";
+        }
+
+        return (String) properties.get(key);
+    }
+
+
+    private static String getProperty(String prefix, String key) {
+        return getProperty(prefix + "." + key);
+    }
+
+
+    public static Schema[] getAll() {
+        int max = Integer.parseInt(getProperty("schemas"));
+
+        Schema[] schemas = new Schema[max];
+        for (int i = 0; i < max; i++) {
+            schemas[i] = get(i + 1);
+        }
+
+        return schemas;
+    }
+
+
+    public static Schema get(int i) {
+        return getByPrefix("schema" + i);
+    }
+
+
+    public static Schema getDefault() {
+        return getByPrefix(getProperty("schemaDefault"));
+    }
+
+
+    private static Schema getByPrefix(String prefix) {
+        Schema schema = new Schema();
+
+        schema.title = getProperty(prefix, "title");
+
+        for (String key: keys) {
+            schema.colors.put(key, getProperty(prefix, key));
+        }
+
+        return schema;
+    }
+
+
+    public String getString(String key) {
+        if (!colors.containsKey(key)) {
+            return "";
+        }
+
+        return (String) colors.get(key);
+    }
+
+
+    public String[] getKeys() {
+        return keys;
+    }
 
 
     public String toString() {
-
-        return description;
-
+        return title;
     }
 
-    public void setDescription(String desc) {
 
-        description = desc;
+    public Color getColor(String key) {
+        return new Color(Integer.parseInt(getProperty(key)));
     }
 
-    public void setColorBg(int color) {
 
-        bg = new Color(color);
+    public Color getBackgroundColor() {
+        return getColor("colorBg");
     }
-
-    public Color getColorBg() {
-
-        return bg;
+    public Color getCursorColor() {
+        return getColor("colorCursor");
     }
-
-    public void setColorBlue(int color) {
-
-        blue = new Color(color);
+    public Color getFieldColor() {
+        return getColor("colorGUIField");
     }
-
-    public Color getColorBlue() {
-
-        return blue;
+    public Color getSeparatorColor() {
+        return getColor("colorSep");
     }
-
-    public void setColorRed(int color) {
-
-        red = new Color(color);
+    public Color getHexAttributeColor() {
+        return getColor("colorHexAttr");
     }
-
-    public Color getColorRed() {
-
-        return red;
-    }
-
-    public void setColorPink(int color) {
-
-        pink = new Color(color);
-    }
-
-    public Color getColorPink() {
-
-        return pink;
-    }
-
-    public void setColorGreen(int color) {
-
-        green = new Color(color);
-    }
-
-    public Color getColorGreen() {
-
-        return green;
-    }
-
-    public void setColorTurq(int color) {
-
-        turq = new Color(color);
-    }
-
-    public Color getColorTurq() {
-
-        return turq;
-    }
-
-    public void setColorYellow(int color) {
-
-        yellow = new Color(color);
-    }
-
-    public Color getColorYellow() {
-
-        return yellow;
-    }
-
-    public void setColorWhite(int color) {
-
-        white = new Color(color);
-    }
-
-    public Color getColorWhite() {
-
-        return white;
-    }
-
-    public void setColorGuiField(int color) {
-
-        gui = new Color(color);
-    }
-
-    public Color getColorGuiField() {
-
-        return gui;
-    }
-
-    public void setColorCursor(int color) {
-
-        cursor = new Color(color);
-    }
-
     public Color getColorCursor() {
-
-
-        return cursor;
+        return getColor("colorCursor");
     }
-
-    public void setColorCursor(int color) {
-
-      cursor = new Color(color);
+    public Color getRed() {
+        return getColor("colorRed");
     }
-
-    public Color getColorCursor() {
-
-
-      return cursor;
+    public Color getTurquoise() {
+        return getColor("colorTurq");
     }
-
-    public void setColorSeparator(int color) {
-
-        columnSep = new Color(color);
+    public Color getWhite() {
+        return getColor("colorWhite");
     }
-
-    public Color getColorSeparator() {
-
-
-        return columnSep;
+    public Color getYellow() {
+        return getColor("colorYellow");
     }
-
-    public void setColorHexAttr(int color) {
-
-        hexAttr = new Color(color);
+    public Color getGreen() {
+        return getColor("colorGreen");
     }
-
-    public Color getColorHexAttr() {
-
-
-        return hexAttr;
+    public Color getBlue() {
+        return getColor("colorBlue");
     }
-
-    private String description;
-    private Color bg;
-    private Color blue;
-    private Color red;
-    private Color pink;
-    private Color green;
-    private Color turq;
-    private Color white;
-    private Color yellow;
-    private Color gui;
-    private Color cursor;
-    private Color columnSep;
-    private Color hexAttr;
 }

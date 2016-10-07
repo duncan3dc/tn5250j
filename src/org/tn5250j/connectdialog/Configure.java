@@ -57,6 +57,10 @@ import org.tn5250j.encoding.CharMappings;
 import org.tn5250j.tools.AlignLayout;
 import org.tn5250j.tools.LangTool;
 
+import org.tn5250j.sessionsettings.Schema;
+import org.tn5250j.tools.logging.TN5250jLogFactory;
+import org.tn5250j.tools.logging.TN5250jLogger;
+
 class Configure {
 
   private static Properties props = null;
@@ -76,6 +80,7 @@ class Configure {
   private static JCheckBox useProxy = null;
   private static JTextField proxyHost = null;
   private static JTextField proxyPort = null;
+  private static JComboBox colorSchema = null;
   private static JCheckBox noEmbed = null;
   private static JCheckBox deamon = null;
   private static JCheckBox newJVM = null;
@@ -248,6 +253,8 @@ class Configure {
       else
         heartBeat.setSelected(false);
 
+      if (isSpecified("-color", args))
+        colorSchema.setSelectedItem(getParm("-color", args));
     }
 
     //Create main attributes panel
@@ -406,10 +413,24 @@ class Configure {
         proxyPort,
         sprox);
 
+    // Colors panel
+    JPanel scolors = new JPanel();
+    scolors.setLayout(new AlignLayout(2, 5, 5));
+    scolors.setBorder(BorderFactory.createEtchedBorder());
+    colorSchema = new JComboBox();
+
+    colorSchema.addItem(LangTool.getString("sa.colorDefault"));
+    for (Schema schema: Schema.getAll()) {
+      colorSchema.addItem(schema);
+    }
+    addLabelComponent(LangTool.getString("conf.labelColorSchema"), colorSchema, scolors);
+
+
     confTabs.addTab(LangTool.getString("conf.tabGeneral"), snp);
     confTabs.addTab(LangTool.getString("conf.tabTCP"), sip);
     confTabs.addTab(LangTool.getString("conf.tabOptions"), op);
     confTabs.addTab(LangTool.getString("conf.tabProxy"), sprox);
+    confTabs.addTab(LangTool.getString("conf.tabColors"), scolors);
 
     if (systemName.getText().trim().length() <= 0) {
       confTabs.setEnabledAt(1, false);
@@ -655,6 +676,10 @@ class Configure {
 
     if (heartBeat.isSelected())
       sb.append(" -hb ");
+
+    //if (!colorSchema.getSelectedItem().equals()
+    sb.append(" -color=" + colorSchema.getSelectedItem());
+    TN5250jLogFactory.getLogger("Configure").info(sb.toString());
 
     return sb.toString();
   }
