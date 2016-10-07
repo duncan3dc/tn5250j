@@ -373,4 +373,8 @@
         <delete file="${dist.dir}/${dist.bin.name}.app.tar"/>
     </target>
 
+    <junit>
+        <test name="org.tn5250j.My5250Test"/>
+    </junit>
+
 </project>
